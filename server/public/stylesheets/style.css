@@ -1,0 +1,35 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.rgb_controls {
+  width: 100%;
+}
+
+.range-bar {
+  margin-top: 3em;
+}
+
+.red_powerrange .range-quantity {
+  background-color: red;
+}
+
+.green_powerrange .range-quantity {
+  background-color: green;
+}
+
+.blue_powerrange .range-quantity {
+  background-color: blue;
+}
+
+.current_color {
+  margin-top: 2em;
+  width: 50%;
+  height: 3em;
+  background-color: white;
+}
