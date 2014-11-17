@@ -13,8 +13,6 @@ $(function() {
     var current_val = 0;
     var current_val_old = 0;
     return  function() {
-      console.log(id);
-      console.log(ip);
       red_slider_value = parseInt(red_slider.value);
       green_slider_value = parseInt(green_slider.value);
       blue_slider_value = parseInt(blue_slider.value);
@@ -53,10 +51,9 @@ $(function() {
     this.set_blue_color = setColor(id, 'blue', ip);
   }
 
-  Controller.prototype.addControls = function(red, green, blue)  {
+  Controller.prototype.addControls = function(red, green, blue, id)  {
     var _self = this;
-    console.log(this);
-    var init_red = new Powerange(red_slider, {
+    _self.init_red = new Powerange(red_slider, {
       start: red,
       min: 0,
       max: 255,
@@ -66,7 +63,7 @@ $(function() {
       klass: "red_powerrange"
     });
 
-    var init_green = new Powerange(green_slider, {
+    _self.init_green = new Powerange(green_slider, {
       start: green,
       min: 0,
       max: 255,
@@ -76,7 +73,7 @@ $(function() {
       klass: "green_powerrange"
     });
 
-    var init_blue = new Powerange(blue_slider, {
+    _self.init_blue = new Powerange(blue_slider, {
       start: blue,
       min: 0,
       max: 255,
@@ -85,13 +82,25 @@ $(function() {
       },
       klass: "blue_powerrange"
     });
+
+  }
+
+  Controller.prototype.hideControls = function() {
+    $(this.init_red.slider).addClass(this.id).hide();
+    $(this.init_green.slider).addClass(this.id).hide();
+    $(this.init_blue.slider).addClass(this.id).hide();
+  }
+
+  Controller.prototype.showControls = function() {
+    $(this.init_red.slider).show();
+    $(this.init_green.slider).show();
+    $(this.init_blue.slider).show();
   }
 
   $("#add_ledstripe").click(function() {
     var form_data = $("#ledstripe_form").serializeArray();
     $.post("/api/ledstripes",
       { name: form_data[0].value, ip: form_data[1].value}, function(data) {
-      console.log(data);
     })
   });
 
@@ -116,20 +125,28 @@ $(function() {
       }
       $("#leds_field h2").after(Mustache.render(ledstipe_html, ledstripe_view));
       current_leds[el._id] = new Controller(el._id, el.ip);
-      current_leds[el._id].addControls(el.red, el.green, el.blue);
+      current_leds[el._id].addControls(el.red, el.green, el.blue, el._id);
+      current_leds[el._id].hideControls();
     });
   });
 
   $('body').delegate('.delete-led','click', function(e) {
     var led_id = $(e.target).parent().attr('data-id');
     $.ajax({
-        url: '/api/ledstripes/' + led_id,
-        type: 'DELETE',
-        success: function(result) {
-          console.log(result)
-        }
+      url: '/api/ledstripes/' + led_id,
+      type: 'DELETE',
+      success: function(result) {
+      }
     })
     $(e.target).parent().remove();
+  });
+
+  $('body').delegate('.select-led','click', function(e) {
+    Object.keys(current_leds).forEach(function(key) {
+      current_leds[key].hideControls();
+    });
+    var led_id = $(e.target).parent().attr('data-id');
+    current_leds[led_id].showControls();
   });
 
   function componentToHex(c) {
