@@ -2,12 +2,20 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  hr
   div(class="pure-g")
-    div(class="pure-u-1-2")
+    div(class="pure-u-1-2" id="leds_field")
       h2.
         LEDs
-      button(id="add_ledstripe", class="btn").
+      form(class="pure_form pure-form-stacked", id="ledstripe_form")
+        label(for="name").
+          Name
+        input(type="text", name="name", placeholder="Name")
+        label(for="ip").
+          IP-Address
+        input(type="text", name="ip", placeholder="IP")
+
+      button(id="add_ledstripe", class="pure-button").
         ADD LED
     div(class="pure-u-1-2")
       h2.

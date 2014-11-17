@@ -39,7 +39,6 @@ var router = express.Router();
 // middleware to use for all requests
 router.use(function(req, res, next) {
   // do logging
-  console.log('Something is happening.');
   next();
 });
 
@@ -51,26 +50,36 @@ router.get('/', function(req, res) {
 app.get('/setled', function(req, res) {
   var color = req.query.color;
   var value = req.query.value;
+  var ip = req.query.ip;
+  var id = req.query.id;
   var pin = 0;
-  switch(color) {
-    case 'red':
-      pin = 5;
-      break;
-    case 'green':
-      pin = 6;
-      break;
-    case 'blue':
-      pin = 3;
-      break;
-    default:
-      pint = 0;
-  }
-  request('http://192.168.1.178/' + pin + '/' +  value, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      console.log(body) // Print the body of response.
-      res.send('');
+
+
+  Ledstripe.findById(id, function(err, ledstripe) {
+    console.log(ledstripe)
+    switch(color) {
+      case 'red':
+        pin = 5;
+        ledstripe.red = value;
+        break;
+      case 'green':
+        pin = 6;
+        ledstripe.green = value;
+        break;
+      case 'blue':
+        pin = 3;
+        ledstripe.blue = value;
+        break;
+      default:
+        pin = 0;
     }
-  })
+    ledstripe.save();
+    request('http://' + ip + "/" + pin + '/' +  value, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        res.send('success');
+      }
+    })
+  });
 });
 
 // on routes that end in /ledstripes
@@ -81,6 +90,10 @@ router.route('/ledstripes')
   .post(function(req, res) {
     var ledstripe = new Ledstripe();    // create a new instance of the Ledstripe model
     ledstripe.name = req.body.name;  // set the ledstripes name (comes from the request)
+    ledstripe.ip = req.body.ip;
+    ledstripe.red = 0;
+    ledstripe.green = 0;
+    ledstripe.blue = 0;
 
     ledstripe.save(function(err) {
       if (err)
