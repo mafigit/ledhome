@@ -21,6 +21,7 @@ mongoose.connect('mongodb://localhost'); // connect to our database
 var Ledstripe     = require('./app/models/ledstripe.js');
 var routes = require('./routes/index');
 var request = require('request');
+var io = require('socket.io').listen('8080');
 
 
 app.set('views', path.join(__dirname, 'views'));
@@ -29,6 +30,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 
+io.sockets.on('connection', function(socket) {
+  console.log(socket)
+  socket.on('ledstripe', function(data) {
+    socket.broadcast.emit('ledstripe', data);
+  })
+});
 
 // ROUTES FOR OUR API
 // =============================================================================

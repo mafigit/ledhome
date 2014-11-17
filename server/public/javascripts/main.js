@@ -3,6 +3,11 @@ $(function() {
   var green_slider = document.querySelector('.green_slider');
   var blue_slider = document.querySelector('.blue_slider');
   var color_field = document.querySelector('.current_color')
+  var socket = io.connect('http://192.168.1.104:8080');
+
+  socket.on('ledstripe', function(data) {
+    current_leds[data.id].setControls(data.r, data.g, data.b)
+  })
 
   red_slider.value = 0;
   green_slider.value = 0;
@@ -38,6 +43,7 @@ $(function() {
         var rgbvalue = rgbToHex(red_slider_value, green_slider_value,
           blue_slider_value);
         color_field.style.backgroundColor=rgbvalue;
+        socket.emit('ledstripe', {id: id, r: red_slider_value, g: green_slider_value, b: blue_slider_value})
       }
 
     }
@@ -95,6 +101,12 @@ $(function() {
     $(this.init_red.slider).show();
     $(this.init_green.slider).show();
     $(this.init_blue.slider).show();
+  }
+
+  Controller.prototype.setControls = function(r,g,b) {
+    this.init_red.setPosition(r);
+    this.init_green.setPosition(g);
+    this.init_blue.setPosition(b);
   }
 
   $("#add_ledstripe").click(function() {
