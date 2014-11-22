@@ -15,7 +15,6 @@ green_slider.value = 0;
 blue_slider.value = 0;
 
 var setColor = function(id, color, ip) {
-  var ajax = false;
   var current_val = 0;
   var current_val_old = 0;
   return  function(object) {
@@ -38,19 +37,53 @@ var setColor = function(id, color, ip) {
         break;
     }
 
-    if(!ajax && current_val_old != current_val) {
-      ajax = true;
-      $.get('/setled', {ip: ip, id: id, color: color, value: current_val}, function(data) {
-        ajax = false;
-        current_val_old = current_val;
-      });
-      setColorField(red_slider_value, green_slider_value, blue_slider_value);
-      socket.emit('ledstripe', { id: id, r: red_slider_value,
+   var ajax_opts =  {
+     url:'/setled',
+     data: {ip: ip, id: id, color: color, value: current_val}
+   }
+   if ($.active > 3) {
+     set_led_queue.addRequest(ajax_opts);
+   } else {
+     set_led_queue.start(function() {
+       $.get(ajax_opts.url, ajax_opts.data, function(data) {});
+       setColorField(red_slider_value, green_slider_value, blue_slider_value);
+       socket.emit('ledstripe', { id: id, r: red_slider_value,
         g: green_slider_value, b: blue_slider_value })
-    }
+     });
+   }
+
 
   }
 }
+
+var AjaxQueue = function(request_max) {
+  this.requests = [];
+  this.request_max = request_max;
+}
+
+AjaxQueue.prototype.addRequest = function(ajax_opts) {
+  var new_req = {
+    url: ajax_opts.url,
+    data: ajax_opts.data
+  }
+  this.requests.push(new_req)
+}
+
+AjaxQueue.prototype.start = function(callback) {
+  var _self = this;
+  var next_element = function() {
+    var next_request = _self.requests.shift();
+    if (next_request === undefined) {
+      callback();
+    } else {
+      $.get(next_request.url, next_request.data, function(data) {
+        next_element();
+      });
+    }
+  }
+  next_element();
+}
+var set_led_queue = new AjaxQueue(3);
 
 var getColorValues = function() {
   var color_hash =
@@ -121,6 +154,13 @@ Controller.prototype.showControls = function() {
   $(this.init_green.slider).show();
   $(this.init_blue.slider).show();
   setColorField(this.red, this.green, this.blue);
+
+  red_slider.value = this.red;
+  green_slider.value = this.green;
+  blue_slider.value = this.blue;
+  this.set_red_color(this)
+  this.set_green_color(this)
+  this.set_blue_color(this)
 }
 
 Controller.prototype.setControls = function(r,g,b) {
