@@ -179,12 +179,9 @@ $("#add_ledstripe").click(function() {
 
 
 var ledstipe_html =
-  "<div class=ledstripe data-id={{id}} data-ip={{ip}} data-name={{name}}" +
-    " data-red={{red}} data-green={{green}} data-blue={{blue}}>" +
-    "<label>{{name}}</label>" +
-    "<button class='delete-led pure-button'>delete</button>" +
-    "<button class='select-led pure-button'>select</button>" +
-  "</div>"
+  "<option class=ledstripe data-id={{id}} data-ip={{ip}} data-name={{name}}" +
+    " data-red={{red}} data-green={{green}} data-blue={{blue}}>{{name}}" +
+  "</option>"
 
 $.get("/api/ledstripes", function(data) {
   data.forEach(function(el) {
@@ -196,7 +193,7 @@ $.get("/api/ledstripes", function(data) {
       green: el.green,
       blue: el.blue
     }
-    $("#leds_field h2").after(Mustache.render(ledstipe_html, ledstripe_view));
+    $("#ledselect").append(Mustache.render(ledstipe_html, ledstripe_view));
     current_leds[el._id] = new Controller(el._id, el.ip);
     current_leds[el._id].addControls(el.red, el.green, el.blue, el._id);
     current_leds[el._id].hideControls();
@@ -214,11 +211,11 @@ $('body').delegate('.delete-led','click', function(e) {
   $(e.target).parent().remove();
 });
 
-$('body').delegate('.select-led','click', function(e) {
+$('body').delegate('#ledselect','change', function(e) {
   Object.keys(current_leds).forEach(function(key) {
     current_leds[key].hideControls();
   });
-  var led_id = $(e.target).parent().attr('data-id');
+  var led_id =
+    $("#" + $(e.target).attr("id") + " option:selected").attr('data-id');
   current_leds[led_id].showControls();
 });
-

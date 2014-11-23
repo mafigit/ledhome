@@ -7,6 +7,10 @@ block content
     div(class="pure-u-1-2" id="leds_field")
       h2.
         LEDs
+      select(id="ledselect", name="ledselect", placeholder="select led")
+        option(value='', disabled, selected, style='display:none;').
+          select LED
+
       form(class="pure_form pure-form-stacked", id="ledstripe_form")
         label(for="name").
           Name
