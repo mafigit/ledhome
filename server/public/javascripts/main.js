@@ -37,22 +37,28 @@ var setColor = function(id, color, ip) {
         break;
     }
 
-   var ajax_opts =  {
-     url:'/setled',
-     data: {ip: ip, id: id, color: color, value: current_val}
-   }
-   if ($.active > 3) {
-     set_led_queue.addRequest(ajax_opts);
-   } else {
-     set_led_queue.start(function() {
-       $.get(ajax_opts.url, ajax_opts.data, function(data) {});
-       setColorField(red_slider_value, green_slider_value, blue_slider_value);
-       socket.emit('ledstripe', { id: id, r: red_slider_value,
-        g: green_slider_value, b: blue_slider_value })
-     });
-   }
-
-
+    var ajax_opts =  {
+      url:'/setled',
+      data: {ip: ip, id: id, color: color, value: current_val}
+    }
+    if ($.active > 3) {
+      set_led_queue.addRequest(ajax_opts);
+    } else {
+      set_led_queue.start(function() {
+        $.ajax({
+          url: ajax_opts.url,
+          type: 'get',
+          timeout: 500,
+          data: ajax_opts.data,
+          success: function(data) {
+           setColorField(red_slider_value, green_slider_value,
+             blue_slider_value);
+           socket.emit('ledstripe', { id: id, r: red_slider_value,
+             g: green_slider_value, b: blue_slider_value })
+          }
+        });
+      });
+    }
   }
 }
 
@@ -76,8 +82,17 @@ AjaxQueue.prototype.start = function(callback) {
     if (next_request === undefined) {
       callback();
     } else {
-      $.get(next_request.url, next_request.data, function(data) {
-        next_element();
+      $.ajax({
+        url: next_request.url,
+        type: 'get',
+        timeout: 500,
+        data: next_request.data,
+        success: function(data) {
+          next_element();
+        },
+        error: function() {
+          next_element();
+        }
       });
     }
   }
