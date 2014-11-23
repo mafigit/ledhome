@@ -3,7 +3,6 @@ var current_leds = {};
 var red_slider = document.querySelector('.red_slider');
 var green_slider = document.querySelector('.green_slider');
 var blue_slider = document.querySelector('.blue_slider');
-var color_field = document.querySelector('.current_color')
 var socket = io.connect('http://192.168.1.104:8080');
 
 socket.on('ledstripe', function(data) {
@@ -110,7 +109,7 @@ var getColorValues = function() {
 }
 var setColorField = function(r, g, b) {
   var rgbvalue = LedHome.Util.rgbToHex(r, g, b);
-  color_field.style.backgroundColor=rgbvalue;
+  $('h1').css('color',rgbvalue);
 }
 
 var Controller = function(id, ip) {
@@ -234,3 +233,5 @@ $('body').delegate('#ledselect','change', function(e) {
     $("#" + $(e.target).attr("id") + " option:selected").attr('data-id');
   current_leds[led_id].showControls();
 });
+
+Select.init();

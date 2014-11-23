@@ -4,28 +4,26 @@ block content
   h1= title
   hr
   div(class="pure-g")
-    div(class="pure-u-1-2" id="leds_field")
+    div(class="pure-u-1-2 left_side" id="leds_field")
       h2.
-        LEDs
+        LED
       select(id="ledselect", name="ledselect", placeholder="select led")
         option(value='', disabled, selected, style='display:none;').
           select LED
-
-      form(class="pure_form pure-form-stacked", id="ledstripe_form")
-        label(for="name").
-          Name
-        input(type="text", name="name", placeholder="Name")
-        label(for="ip").
-          IP-Address
-        input(type="text", name="ip", placeholder="IP")
-
-      button(id="add_ledstripe", class="pure-button").
-        ADD LED
-    div(class="pure-u-1-2")
+    div(class="pure-u-1-2 right_side")
       h2.
-        Pick Color
+        Color
       div(class='rgb_controls')
-        input(class='red_slider slider')
-        input(class='green_slider slider')
-        input(class='blue_slider slider')
-        div(class='current_color')
+        input(class='red_slider slider', style='display:none;')
+        input(class='green_slider slider', style='display:none;')
+        input(class='blue_slider slider', style='display:none;')
+  div(class="pure-g")
+    button(id="add_ledstripe", class="pure-button").
+      ADD LED
+   // form(class="pure_form pure-form-stacked", id="ledstripe_form")
+   //   label(for="name").
+   //     Name
+   //   input(type="text", name="name", placeholder="Name")
+   //   label(for="ip").
+   //     IP-Address
+   //   input(type="text", name="ip", placeholder="IP")
