@@ -178,10 +178,9 @@ Controller.prototype.showControls = function() {
 }
 
 Controller.prototype.setControls = function(r,g,b) {
-  //TODO: calculate right offset
-  this.init_red.setPosition(r);
-  this.init_green.setPosition(g);
-  this.init_blue.setPosition(b);
+  this.init_red.setPosition(r, true);
+  this.init_green.setPosition(g, true);
+  this.init_blue.setPosition(b, true);
 }
 
 $("#add_ledstripe").click(function() {
