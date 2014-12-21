@@ -174,6 +174,9 @@ Controller.prototype.showControls = function() {
 }
 
 Controller.prototype.setControls = function(r,g,b) {
+  red_slider.value = r;
+  green_slider.value = g;
+  blue_slider.value = b;
   this.init_red.setPosition(r, true);
   this.init_green.setPosition(g, true);
   this.init_blue.setPosition(b, true);
