@@ -1633,9 +1633,17 @@ Horizontal.prototype.setStart = function(start) {
  * @api private
  */
 
-Horizontal.prototype.setPosition = function(val) {
-  this.handle.style.left = val + 'px';
-  this.slider.querySelector('.range-quantity').style.width = val + 'px';
+Horizontal.prototype.setPosition = function(val, force) {
+  var new_value = val;
+
+  if (force) {
+    var part = percentage.from(val - this.options.min, this.options.max - this.options.min) || 0
+    var offset = percentage.of(part, this.slider.offsetWidth - this.handle.offsetWidth)
+    new_value = (this.options.step) ? closest.find(offset, this.steps) : offset;
+  }
+
+  this.handle.style.left = new_value + 'px';
+  this.slider.querySelector('.range-quantity').style.width = new_value + 'px';
 };
 
 /**
