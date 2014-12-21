@@ -40,24 +40,20 @@ var setColor = function(id, color, ip) {
       url:'/setled',
       data: {ip: ip, id: id, color: color, value: current_val}
     }
-    if ($.active > 3) {
-      set_led_queue.addRequest(ajax_opts);
-    } else {
-      set_led_queue.start(function() {
-        $.ajax({
-          url: ajax_opts.url,
-          type: 'get',
-          timeout: 500,
-          data: ajax_opts.data,
-          success: function(data) {
-           setColorField(red_slider_value, green_slider_value,
-             blue_slider_value);
-           socket.emit('ledstripe', { id: id, r: red_slider_value,
-             g: green_slider_value, b: blue_slider_value })
-          }
-        });
-      });
-    }
+
+    $.ajax({
+      url: ajax_opts.url,
+      type: 'get',
+      timeout: 500,
+      data: ajax_opts.data,
+      success: function(data) {
+       setColorField(red_slider_value, green_slider_value,
+         blue_slider_value);
+       socket.emit('ledstripe', { id: id, r: red_slider_value,
+         g: green_slider_value, b: blue_slider_value })
+      }
+    });
+
   }
 }
 
@@ -181,6 +177,7 @@ Controller.prototype.setControls = function(r,g,b) {
   this.init_red.setPosition(r, true);
   this.init_green.setPosition(g, true);
   this.init_blue.setPosition(b, true);
+  setColorField(r, g, b);
 }
 
 $("#add_ledstripe").click(function() {
