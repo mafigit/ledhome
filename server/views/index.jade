@@ -18,12 +18,20 @@ block content
         input(class='green_slider slider', style='display:none;')
         input(class='blue_slider slider', style='display:none;')
   div(class="pure-g")
-    button(id="add_ledstripe", class="pure-button").
-      ADD LED
-   // form(class="pure_form pure-form-stacked", id="ledstripe_form")
-   //   label(for="name").
-   //     Name
-   //   input(type="text", name="name", placeholder="Name")
-   //   label(for="ip").
-   //     IP-Address
-   //   input(type="text", name="ip", placeholder="IP")
+    input(type="button" class='modal-open pure-button' onclick="window.location.href='#modal-text';" value="NEW LED")
+    section(class="modal--show" id="modal-text" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true")
+      div(class="modal-inner")
+        header(id="modal-label").
+          Create New LED
+        div(class="modal-content")
+          form(class="pure_form pure-form-stacked", id="ledstripe_form")
+            label(for="name").
+              Name
+            input(type="text", name="name", placeholder="Name")
+            label(for="ip").
+              IP-Address
+            input(type="text", name="ip", placeholder="IP")
+        footer
+          input(type="button" id="add_ledstripe" class='modal-open pure-button' onclick="window.location.href='#!';" value="ADD LED")
+      a(href="#!" class="modal-close" title="Close this modal" data-close="X" data-dismiss="modal").
+       ?
